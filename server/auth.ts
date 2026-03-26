@@ -8,15 +8,21 @@ import memoize from "memoizee";
 import connectPg from "connect-pg-simple";
 import { storage } from "./storage";
 
-if (!process.env.REPLIT_DOMAINS) {
-  throw new Error("Environment variable REPLIT_DOMAINS not provided");
+if (!process.env.AUTH_DOMAINS) {
+  throw new Error("Environment variable AUTH_DOMAINS not provided");
+}
+if (!process.env.OIDC_ISSUER_URL) {
+  throw new Error("Environment variable OIDC_ISSUER_URL not provided");
+}
+if (!process.env.OIDC_CLIENT_ID) {
+  throw new Error("Environment variable OIDC_CLIENT_ID not provided");
 }
 
 const getOidcConfig = memoize(
   async () => {
     return await client.discovery(
-      new URL(process.env.ISSUER_URL ?? "https://replit.com/oidc"),
-      process.env.REPL_ID!
+      new URL(process.env.OIDC_ISSUER_URL!),
+      process.env.OIDC_CLIENT_ID!
     );
   },
   { maxAge: 3600 * 1000 }
@@ -85,10 +91,10 @@ export async function setupAuth(app: Express) {
   };
 
   for (const domain of process.env
-    .REPLIT_DOMAINS!.split(",")) {
+    .AUTH_DOMAINS!.split(",")) {
     const strategy = new Strategy(
       {
-        name: `replitauth:${domain}`,
+        name: `oidc:${domain}`,
         config,
         scope: "openid email profile offline_access",
         callbackURL: `https://${domain}/api/callback`,
@@ -102,14 +108,14 @@ export async function setupAuth(app: Express) {
   passport.deserializeUser((user: Express.User, cb) => cb(null, user));
 
   app.get("/api/login", (req, res, next) => {
-    passport.authenticate(`replitauth:${req.hostname}`, {
+    passport.authenticate(`oidc:${req.hostname}`, {
       prompt: "login consent",
       scope: ["openid", "email", "profile", "offline_access"],
     })(req, res, next);
   });
 
   app.get("/api/callback", (req, res, next) => {
-    passport.authenticate(`replitauth:${req.hostname}`, {
+    passport.authenticate(`oidc:${req.hostname}`, {
       successReturnToOrRedirect: "/",
       failureRedirect: "/api/login",
     })(req, res, next);
@@ -119,7 +125,7 @@ export async function setupAuth(app: Express) {
     req.logout(() => {
       res.redirect(
         client.buildEndSessionUrl(config, {
-          client_id: process.env.REPL_ID!,
+          client_id: process.env.OIDC_CLIENT_ID!,
           post_logout_redirect_uri: `${req.protocol}://${req.hostname}`,
         }).href
       );

@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { insertItemSchema, insertPollSchema, insertPollVoteSchema, insertFriendRequestSchema, insertWishlistItemSchema } from "@shared/schema";
 import { ObjectStorageService } from "./objectStorage";
 import { generateOutfitSuggestion, classifyClothingImage } from "./openai";
-import { setupAuth, isAuthenticated } from "./replitAuth";
+import { setupAuth, isAuthenticated } from "./auth";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // Setup authentication

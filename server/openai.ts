@@ -2,10 +2,9 @@ import OpenAI from "openai";
 import type { ItemCategory } from "@shared/schema";
 import { ITEM_CATEGORIES } from "@shared/schema";
 
-// Use Replit AI Integrations for OpenAI access
-const openai = new OpenAI({ 
-  apiKey: process.env.AI_INTEGRATIONS_OPENAI_API_KEY || process.env.OPENAI_API_KEY || "dummy-key",
-  baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL || undefined,
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY || "dummy-key",
+  baseURL: process.env.OPENAI_BASE_URL || undefined,
 });
 
 export interface ClassificationResult {

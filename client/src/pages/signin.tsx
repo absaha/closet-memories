@@ -194,25 +194,6 @@ export default function SignIn() {
                   onClick={() => {
                     toast({
                       title: "Coming soon",
-                      description: "Social sign-in will be available soon."
-                    });
-                  }}
-                  data-testid="button-replit"
-                >
-                  <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 2L2 7L12 12L22 7L12 2Z" />
-                    <path d="M2 17L12 22L22 17" />
-                    <path d="M2 12L12 17L22 12" />
-                  </svg>
-                  Continue with Replit
-                </Button>
-                
-                <Button
-                  variant="outline"
-                  className="w-full py-2.5 px-4 rounded-lg border-border hover:bg-muted transition-colors"
-                  onClick={() => {
-                    toast({
-                      title: "Coming soon",
                       description: "Google sign-in will be available soon."
                     });
                   }}

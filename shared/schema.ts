@@ -6,7 +6,7 @@ import { z } from "zod";
 // Category enum for closet items (ALL is UI-only, not stored in DB)
 export const itemCategoryEnum = pgEnum("item_category", ["TOPS", "BOTTOMS", "DRESSES", "SHOES", "ACCESSORIES"]);
 
-// Session storage table for Replit Auth
+// Session storage table for OIDC auth
 export const sessions = pgTable(
   "sessions",
   {
@@ -17,7 +17,7 @@ export const sessions = pgTable(
   (table) => [index("IDX_session_expire").on(table.expire)],
 );
 
-// User storage table for Replit Auth
+// User storage table for OIDC auth
 export const users = pgTable("users", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   email: varchar("email").unique(),
